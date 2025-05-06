@@ -190,7 +190,7 @@ export default function IngredientSearchSheet({ isOpen, onClose, onAddIngredient
           </div>
         )}
 
-        <button className="add-button" onClick={handleAddIngredient}>
+        <button className="search-add-button" onClick={handleAddIngredient}>
           재료 추가
         </button>
 
