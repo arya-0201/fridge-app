@@ -17,7 +17,7 @@ import MyRefrigerator from "@/components/my-refrigerator"
 import RecipeBook from "@/components/recipe-book"
 import IngredientDB from "@/components/ingredient-db"
 import Navigation from "@/components/navigation"
-import "./globals.css"
+import '../styles/globals.css'
 import { firebaseApp } from '../lib/firebase'
 import { getFirestore, collection, getDocs } from 'firebase/firestore'
 
