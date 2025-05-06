@@ -213,9 +213,9 @@ export default function RecipeBook() {
             <div className="recipe-content">
               <div className="recipe-header">
                 <span className={`recipe-tag ${recipe.status}`}>
-                  {recipe.status === "saved" && "저장됐습니다"}
-                  {recipe.status === "eat" && "먹어나오자요"}
-                  {recipe.status === "provided" && "제공기억이요"}
+                  {recipe.status === "saved" && "지금 만들수있어요"}
+                  {recipe.status === "eat" && "딱!하나 모자라요"}
+                  {recipe.status === "provided" && "재료가 없어요"}
                 </span>
                 <div className="dropdown-container">
                   <button className="options-button" onClick={(e) => toggleDropdown(recipe.id, e)}>

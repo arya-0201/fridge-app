@@ -1,5 +1,6 @@
 .nav-container {
   height: 64px;
+  background-color: #fff;
   border-top: 1px solid #eaeaea;
   display: flex;
   align-items: center;
@@ -26,10 +27,20 @@
   font-size: 12px;
   margin-top: 4px;
 }
+/* 활성된 버튼의 레이블은 굵게 */
+.nav-button.active .nav-label {
+  font-weight: 600; /* 또는 bold */
+}
+
+/* 비활성 버튼의 레이블은 얇게 */
+.nav-button:not(.active) .nav-label {
+  font-weight: 400; /* 또는 normal */
+}
 
 /* 미디어 쿼리 - 태블릿 (iPad Mini) */
 @media (min-width: 431px) {
   .nav-container {
+    background-color: #fff;
     height: 72px;
   }
 

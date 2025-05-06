@@ -124,7 +124,7 @@ export default function MyRefrigerator() {
               <div className="item-header">
                 <span className={`status-tag ${ingredient.status}`}>
                   {ingredient.status === "expired" && "유통기한 지났어요"}
-                  {ingredient.status === "fresh" && "아직 냉장해요"}
+                  {ingredient.status === "fresh" && "아직 괜찮아요"}
                   {ingredient.status === "soon" && "빨리 소진해주세요"}
                 </span>
                 <button className="delete-button" onClick={() => handleDeleteIngredient(ingredient.id)}>
@@ -146,7 +146,7 @@ export default function MyRefrigerator() {
               </div>
               <h2 className="item-title">{ingredient.name}</h2>
               <p className="item-date">
-                {ingredient.registrationDate} 등록 - {ingredient.expiryDate}까지
+                {ingredient.registrationDate} 등록 - {ingredient.expiryDate} 까지
               </p>
             </div>
           </div>

@@ -12,19 +12,18 @@
 .recipe-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 }
 
 .recipe-card {
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  border: 1px solid #f3f4f6;
+  border-radius: 12px;
+  border: 1px solid #F2F2F2;
   width: 100%;
 }
 
 .recipe-content {
-  padding: 16px;
+  padding: 20px;
 }
 
 .recipe-header {
@@ -37,22 +36,22 @@
 .recipe-tag {
   font-size: 12px;
   padding: 4px 8px;
-  border-radius: 9999px;
+  border-radius: 6px;
 }
 
 .recipe-tag.saved {
-  background-color: #dcfce7;
-  color: #16a34a;
+  background-color: #27C97B;
+  color: #fff;
 }
 
 .recipe-tag.eat {
-  background-color: #fef3c7;
-  color: #d97706;
+  background-color: #FFCC16;
+  color: #fff;
 }
 
 .recipe-tag.provided {
-  background-color: #f3f4f6;
-  color: #6b7280;
+  background-color: #EDEDED;
+  color: #A6A6A6;
 }
 
 .options-button {
@@ -60,35 +59,35 @@
 }
 
 .recipe-title {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .nutrition-info {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 8px;
-  color: #6b7280;
-  font-size: 14px;
+  margin-bottom: 4px;
+  color: #808080;
+  font-size: 16px;
 }
 
 .recipe-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 4px 8px;
   margin-bottom: 12px;
 }
 
 .recipe-tag-item {
-  color: #3b82f6;
-  font-size: 14px;
+  color: #000;
+  font-size: 16px;
 }
 
 .recipe-link {
-  color: #3b82f6;
-  font-size: 14px;
+  color: #3651FF;
+  font-size: 16px;
 }
 
 /* 미디어 쿼리 - 태블릿 (iPad Mini) */
@@ -105,7 +104,7 @@
   .recipe-list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: 8px;
   }
 
   .recipe-content {
@@ -117,6 +116,6 @@
   }
 
   .nutrition-info {
-    font-size: 15px;
+    font-size: 16px;
   }
 }

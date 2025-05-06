@@ -12,20 +12,19 @@
 .item-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 }
 
 .item-card {
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  border: 1px solid #f3f4f6;
+  border-radius: 12px;
+  border: 1px solid #F2F2F2;
   overflow: hidden;
   width: 100%;
 }
 
 .item-content {
-  padding: 16px;
+  padding: 20px;
 }
 
 .item-header {
@@ -38,22 +37,22 @@
 .status-tag {
   font-size: 12px;
   padding: 4px 8px;
-  border-radius: 9999px;
+  border-radius: 6px;
 }
 
 .status-tag.expired {
-  background-color: #fee2e2;
-  color: #dc2626;
+  background-color: #FF4B4B;
+  color: #fff;
 }
 
 .status-tag.fresh {
-  background-color: #dcfce7;
-  color: #16a34a;
+  background-color: #27C97B;
+  color: #fff;
 }
 
 .status-tag.soon {
-  background-color: #fef3c7;
-  color: #d97706;
+  background-color: #FFCC16;
+  color: #fff;
 }
 
 .delete-button {
@@ -61,14 +60,14 @@
 }
 
 .item-title {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 700;
   margin-bottom: 4px;
 }
 
 .item-date {
   color: #6b7280;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 /* 미디어 쿼리 - 태블릿 (iPad Mini) */

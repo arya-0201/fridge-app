@@ -12,20 +12,19 @@
 .ingredient-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 }
 
 .ingredient-card {
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  border: 1px solid #f3f4f6;
+  border-radius: 12px;
+  border: 1px solid #f2f2f2;
   overflow: visible;
   width: 100%;
 }
 
 .ingredient-content {
-  padding: 16px;
+  padding: 20px;
 }
 
 .ingredient-header {
@@ -36,7 +35,7 @@
 }
 
 .ingredient-title {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 700;
 }
 
@@ -49,14 +48,14 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  color: #6b7280;
-  font-size: 14px;
+  color: #808080;
+  font-size: 16px;
 }
 
 .shelf-life {
   margin-left: auto;
-  color: #6b7280;
-  font-size: 14px;
+  color: #808080;
+  font-size: 16px;
 }
 
 /* 미디어 쿼리 - 태블릿 (iPad Mini) */
