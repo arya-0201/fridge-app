@@ -6,60 +6,32 @@ import "../styles/ingredient-db.css"
 import "../styles/add-button.css"
 import "../styles/dropdown-menu.css"
 import AddFoodModal from "./add-food-modal"
-import { firebaseApp } from '../lib/firebase'
-import { getFirestore, collection, getDocs } from 'firebase/firestore'
-
-// 1) 공통으로 Firestore GET 해서 state 갱신
-async function loadFoods(firebaseApp: any, setFoods: React.Dispatch<React.SetStateAction<Food[]>>) {
-    const db = getFirestore(firebaseApp)
-const colRef = collection(db, 'ingredients')
-const snap = await getDocs(colRef)
-    const list = snap.docs.map(doc => ({ id: doc.id, ...(doc.data() as Omit<Food,'id'>) }))
-    setFoods(list)
-  }
-
-  
-
-// 식재료 타입 정의
-interface Food {
-  id: string
-  name: string
-  weight: number
-  calories: string
-  carbs: string
-  protein: string
-  fat: string
-  shelfLife: number
-  unitWeight: string
-}
+import { Ingredient, getIngredients, addIngredient, updateIngredient, deleteIngredient } from "../src/services/ingredientService"
 
 export default function IngredientDB() {
   // 모달 상태 관리
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
-  const [editingFood, setEditingFood] = useState<Food | null>(null)
+  const [editingFood, setEditingFood] = useState<Ingredient | null>(null)
 
   // 드롭다운 메뉴 상태 관리
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
 
   // 식재료 목록 상태 관리
-  const [foods, setFoods] = useState<Food[]>([  ])
+  const [foods, setFoods] = useState<Ingredient[]>([])
 
-// 마운트 시, 그리고 reload 필요할 때(loadFoods 호출)
+  // 초기 데이터 로드
   useEffect(() => {
-    loadFoods(firebaseApp, setFoods)
+    const loadFoods = async () => {
+      try {
+        const items = await getIngredients()
+        setFoods(items)
+      } catch (error) {
+        console.error('Error loading ingredients:', error)
+      }
+    }
+    loadFoods()
   }, [])
-
-
-  async function handleDeleteIngredient(id: string) {
-    await fetch("/api/ingredients", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
-    // 삭제 후 다시 목록 로드
-    loadFoods(firebaseApp, setFoods);
-  }
 
   // 드롭다운 메뉴 토글
   const toggleDropdown = (id: string) => {
@@ -76,7 +48,7 @@ export default function IngredientDB() {
   }
 
   // 식재료 수정 시작
-  const handleEditFood = (food: Food) => {
+  const handleEditFood = (food: Ingredient) => {
     setEditingFood(food)
     setIsEditMode(true)
     setIsModalOpen(true)
@@ -84,12 +56,14 @@ export default function IngredientDB() {
   }
 
   // 식재료 삭제
-    const handleDeleteFood = async (id: string) => {
-        // DELETE API 호출
-        await fetch(`/api/ingredients?id=${id}`, { method: 'DELETE' })
-        // 리스트 재조회
-        loadFoods(firebaseApp, setFoods)
-    closeDropdown()
+  const handleDeleteFood = async (id: string) => {
+    try {
+      await deleteIngredient(id)
+      setFoods(foods.filter(food => food.id !== id))
+      closeDropdown()
+    } catch (error) {
+      console.error('Error deleting ingredient:', error)
+    }
   }
 
   // 식재료 추가/수정 함수
@@ -103,43 +77,50 @@ export default function IngredientDB() {
     shelfLife: number
     unitWeight: number
   }) => {
-    if (isEditMode && editingFood) {
-            // 수정 모드: PUT 호출
-            await fetch(`/api/ingredients?id=${editingFood.id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(food),
-            })
-      const updatedFoods = foods.map((item) => {
-        if (item.id === editingFood.id) {
-          return {
-            ...item,
-            name: food.name,
-            weight: food.weight,
-            calories: food.calories,
-            carbs: food.carbs,
-            protein: food.protein,
-            fat: food.fat,
-            shelfLife: food.shelfLife,
-          }
-        }
-        return item
-      })
-      setFoods(updatedFoods)
-    } else {
-      // 추가 모드: POST 호출
-      await fetch('/api/ingredients', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(food),
+    try {
+      if (isEditMode && editingFood) {
+        // 수정 모드
+        await updateIngredient(editingFood.id!, {
+          name: food.name,
+          weight: food.weight,
+          calories: food.calories,
+          carbs: food.carbs,
+          protein: food.protein,
+          fat: food.fat,
+          shelfLife: food.shelfLife,
+          unitWeight: food.unitWeight.toString()
         })
-    }
+        
+        // 로컬 상태 업데이트
+        setFoods(foods.map(item => 
+          item.id === editingFood.id 
+            ? { ...item, ...food, unitWeight: food.unitWeight.toString() }
+            : item
+        ))
+      } else {
+        // 추가 모드
+        const newIngredient = await addIngredient({
+          name: food.name,
+          weight: food.weight,
+          calories: food.calories,
+          carbs: food.carbs,
+          protein: food.protein,
+          fat: food.fat,
+          shelfLife: food.shelfLife,
+          unitWeight: food.unitWeight.toString()
+        })
+        
+        // 로컬 상태 업데이트
+        setFoods([newIngredient, ...foods])
+      }
 
-    // 모달 닫고 리스트 재조회
-    setIsModalOpen(false)
-    setIsEditMode(false)
-    setEditingFood(null)
-    loadFoods(firebaseApp, setFoods)
+      // 모달 닫기
+      setIsModalOpen(false)
+      setIsEditMode(false)
+      setEditingFood(null)
+    } catch (error) {
+      console.error('Error saving ingredient:', error)
+    }
   }
 
   // 모달 닫기 핸들러
@@ -167,7 +148,7 @@ export default function IngredientDB() {
               <div className="ingredient-header">
                 <h2 className="ingredient-title">{food.name}</h2>
                 <div className="dropdown-container">
-                  <button className="options-button" onClick={() => toggleDropdown(food.id)}>
+                  <button className="options-button" onClick={() => toggleDropdown(food.id!)}>
                     <MoreVertical size={20} />
                   </button>
                   {openDropdownId === food.id && (
@@ -179,7 +160,7 @@ export default function IngredientDB() {
                           수정
                         </div>
                         
-                        <div className="dropdown-item delete" onClick={() => handleDeleteFood(food.id)}>
+                        <div className="dropdown-item delete" onClick={() => handleDeleteFood(food.id!)}>
                           <Trash2 size={16} />
                           삭제
                         </div>
@@ -212,21 +193,7 @@ export default function IngredientDB() {
         onClose={handleCloseModal}
         onAddFood={handleAddFood}
         isEditMode={isEditMode}
-            editingFood={
-                editingFood
-                  ? {
-                      // 반드시 AddFoodModal의 Food 인터페이스와 똑같이 필드 타입을 string으로 맞춰줘야 합니다
-          id:            editingFood.id,
-          name:          editingFood.name,
-          weight:        editingFood.weight.toString(),
-          calories:      editingFood.calories,
-          carbs:         editingFood.carbs,
-          protein:       editingFood.protein,
-          fat:           editingFood.fat,
-          shelfLife: editingFood.shelfLife?.toString() ?? ""
-                    }
-                  : null
-              }
+        editingFood={editingFood}
       />
     </div>
   )

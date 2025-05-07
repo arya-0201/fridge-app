@@ -3,14 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { X, Search } from "lucide-react"
 import "../styles/ingredient-search-sheet.css"
-import { firebaseApp } from '../lib/firebase'
-import { getFirestore, collection, getDocs } from 'firebase/firestore'
-
-interface Food {
-  id: string
-  name: string
-  calories: string
-}
+import { Ingredient, getIngredients } from "../src/services/ingredientService"
 
 interface IngredientSearchSheetProps {
   isOpen: boolean
@@ -20,29 +13,36 @@ interface IngredientSearchSheetProps {
 
 export default function IngredientSearchSheet({ isOpen, onClose, onAddIngredient }: IngredientSearchSheetProps) {
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedFood, setSelectedFood] = useState<Food | null>(null)
+  const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null)
   const [weight, setWeight] = useState("")
   const [showToast, setShowToast] = useState(false)
   const [toastMessage, setToastMessage] = useState("")
+  const [ingredients, setIngredients] = useState<Ingredient[]>([])
+  const [isLoading, setIsLoading] = useState(false)
   const sheetRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
-  // 샘플 식재료 데이터
-  const foods: Food[] = [
-    { id: "1", name: "냉동 블루베리", calories: "57kcal" },
-    { id: "2", name: "냉동 라즈베리", calories: "52kcal" },
-    { id: "3", name: "냉동 야채", calories: "25kcal" },
-    { id: "4", name: "냉동삼겹살", calories: "242kcal" },
-    { id: "5", name: "냉장 닭가슴살", calories: "165kcal" },
-    { id: "6", name: "토마토", calories: "18kcal" },
-    { id: "7", name: "오이", calories: "15kcal" },
-    { id: "8", name: "당근", calories: "41kcal" },
-    { id: "9", name: "양파", calories: "40kcal" },
-    { id: "10", name: "마늘", calories: "149kcal" },
-  ]
+  // Load ingredients on mount
+  useEffect(() => {
+    const loadIngredients = async () => {
+      try {
+        setIsLoading(true)
+        const items = await getIngredients()
+        setIngredients(items)
+      } catch (error) {
+        console.error('Error loading ingredients:', error)
+        showToastMessage("재료 목록을 불러오는데 실패했습니다")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    loadIngredients()
+  }, [])
 
-  // 검색 결과 필터링
-  const filteredFoods = foods.filter((food) => food.name.toLowerCase().includes(searchTerm.toLowerCase()))
+  // Filter ingredients based on search term
+  const filteredIngredients = ingredients.filter((ingredient) =>
+    ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   // 모달이 열릴 때 검색 입력란에 포커스
   useEffect(() => {
@@ -88,14 +88,14 @@ export default function IngredientSearchSheet({ isOpen, onClose, onAddIngredient
   }, [isOpen, onClose])
 
   // 식재료 선택 처리
-  const handleSelectFood = (food: Food) => {
-    setSelectedFood(food)
-    setSearchTerm(food.name)
+  const handleSelectIngredient = (ingredient: Ingredient) => {
+    setSelectedIngredient(ingredient)
+    setSearchTerm(ingredient.name)
   }
 
   // 재료 추가 처리
   const handleAddIngredient = () => {
-    if (!selectedFood) {
+    if (!selectedIngredient) {
       showToastMessage("재료를 선택해주세요")
       return
     }
@@ -106,14 +106,14 @@ export default function IngredientSearchSheet({ isOpen, onClose, onAddIngredient
     }
 
     onAddIngredient({
-      name: selectedFood.name,
+      name: selectedIngredient.name,
       weight: weight,
-      calories: selectedFood.calories,
+      calories: selectedIngredient.calories,
     })
 
     // 상태 초기화
     setSearchTerm("")
-    setSelectedFood(null)
+    setSelectedIngredient(null)
     setWeight("")
     onClose()
   }
@@ -151,18 +151,24 @@ export default function IngredientSearchSheet({ isOpen, onClose, onAddIngredient
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value)
-                setSelectedFood(null)
+                setSelectedIngredient(null)
               }}
             />
           </div>
         </div>
 
-        {searchTerm && !selectedFood && (
+        {searchTerm && !selectedIngredient && (
           <div className="search-results">
-            {filteredFoods.length > 0 ? (
-              filteredFoods.map((food) => (
-                <div key={food.id} className="search-result-item" onClick={() => handleSelectFood(food)}>
-                  {food.name}
+            {isLoading ? (
+              <div className="search-result-item">로딩중...</div>
+            ) : filteredIngredients.length > 0 ? (
+              filteredIngredients.map((ingredient) => (
+                <div
+                  key={ingredient.id}
+                  className="search-result-item"
+                  onClick={() => handleSelectIngredient(ingredient)}
+                >
+                  {ingredient.name}
                 </div>
               ))
             ) : (
@@ -171,7 +177,7 @@ export default function IngredientSearchSheet({ isOpen, onClose, onAddIngredient
           </div>
         )}
 
-        {selectedFood && (
+        {selectedIngredient && (
           <div className="weight-input-container">
             <div className="weight-input-box">
               <label className="weight-label">무게</label>

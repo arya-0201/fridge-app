@@ -3,19 +3,8 @@
 import { useState, useEffect } from "react"
 import { X } from "lucide-react"
 import "../styles/add-food-modal.css"
-import { firebaseApp } from '../lib/firebase'
-import { getFirestore, collection, getDocs } from 'firebase/firestore'
-
-interface Food {
-  id: string
-  name: string
-  weight: string
-  calories: string
-  carbs: string
-  protein: string
-  fat: string
-  shelfLife: string
-}
+import IngredientSearchSheet from "./ingredient-search-sheet"
+import { Ingredient, getIngredients } from "../src/services/ingredientService"
 
 interface AddFoodModalProps {
   isOpen: boolean
@@ -31,7 +20,7 @@ interface AddFoodModalProps {
     unitWeight: number
   }) => void
   isEditMode?: boolean
-  editingFood?: Food | null
+  editingFood?: Ingredient | null
 }
 
 export default function AddFoodModal({
@@ -49,18 +38,19 @@ export default function AddFoodModal({
   const [fat, setFat] = useState("")
   const [shelfLife, setShelfLife] = useState<number | "">("")
   const [unitWeight, setUnitWeight] = useState<number | "">("")
+  const [isSearchSheetOpen, setIsSearchSheetOpen] = useState(false)
 
   // 수정 모드일 때 기존 데이터 로드
   useEffect(() => {
     if (isEditMode && editingFood) {
       setName(editingFood.name)
-      setWeight(editingFood.weight)
+      setWeight(editingFood.weight.toString())
       setCalories(editingFood.calories)
       setCarbs(editingFood.carbs)
       setProtein(editingFood.protein)
       setFat(editingFood.fat)
-      setShelfLife(editingFood.shelfLife === "" ? "" : Number(editingFood.shelfLife))
-      setUnitWeight("") // 기존 데이터에 없을 수 있음
+      setShelfLife(editingFood.shelfLife)
+      setUnitWeight(Number(editingFood.unitWeight) || "")
     } else {
       // 추가 모드일 때 초기화
       setName("")
@@ -73,6 +63,19 @@ export default function AddFoodModal({
       setUnitWeight("")
     }
   }, [isEditMode, editingFood, isOpen])
+
+  // Handle ingredient selection from search sheet
+  const handleIngredientSelect = (ingredient: { name: string; weight: string; calories: string }) => {
+    setName(ingredient.name)
+    setWeight(ingredient.weight)
+    setCalories(ingredient.calories)
+    // 기본값 설정
+    setCarbs("0")
+    setProtein("0")
+    setFat("0")
+    setShelfLife(7) // 기본 7일
+    setUnitWeight(Number(ingredient.weight) || 100) // 기본 100g
+  }
 
   // 폼 제출 처리
   const handleSubmit = () => {
@@ -104,13 +107,18 @@ export default function AddFoodModal({
         <div className="modal-content">
           <div className="form-group">
             <label className="form-label">재료 이름</label>
-            <input
-              type="text"
-              className="form-input"
-              placeholder="이름을 입력해주세요"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <div className="form-input-with-button">
+              <input
+                type="text"
+                className="form-input"
+                placeholder="이름을 입력해주세요"
+                value={name}
+                readOnly
+              />
+              <button className="search-button" onClick={() => setIsSearchSheetOpen(true)}>
+                검색
+              </button>
+            </div>
           </div>
 
           <div className="form-group">
@@ -186,17 +194,13 @@ export default function AddFoodModal({
           <div className="form-group">
             <label className="form-label">평균 유통기한</label>
             <div className="form-input-with-unit">
-            <input
-    type="number"
-    className="form-input"
-    placeholder="0"
-    // undefined 대신 "" 을 디폴트로
-    value={shelfLife === "" ? "" : shelfLife}
-    onChange={(e) => {
-      const v = e.currentTarget.value
-      setShelfLife(v === "" ? "" : Number(v))
-    }}
-  />
+              <input
+                type="number"
+                className="form-input"
+                placeholder="0"
+                value={shelfLife ?? ""}
+                onChange={(e) => setShelfLife(e.target.value ? Number(e.target.value) : "")}
+              />
               <span className="unit">일</span>
             </div>
           </div>
@@ -209,11 +213,10 @@ export default function AddFoodModal({
                 className="form-input"
                 placeholder="0"
                 value={unitWeight === "" ? "" : unitWeight}
-                   onChange={(e) => {
-                       const v = e.currentTarget.value
-                       // 숫자로 변환. input이 완전히 비워지면 빈 문자열
-                       setUnitWeight(v === "" ? "" : Number(v))
-                     }}
+                onChange={(e) => {
+                  const v = e.currentTarget.value
+                  setUnitWeight(v === "" ? "" : Number(v))
+                }}
               />
               <span className="unit">g</span>
             </div>
@@ -225,6 +228,12 @@ export default function AddFoodModal({
           </button>
         </div>
       </div>
+
+      <IngredientSearchSheet
+        isOpen={isSearchSheetOpen}
+        onClose={() => setIsSearchSheetOpen(false)}
+        onAddIngredient={handleIngredientSelect}
+      />
     </div>
   )
 }

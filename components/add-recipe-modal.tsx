@@ -203,25 +203,25 @@ export default function AddRecipeModal({
               <Search className="icon" size={24} color="#6b7280" />
               <input type="text" className="form-input" placeholder="재료명을 입력해주세요" readOnly value="" />
             </div>
-
-            {ingredients.length > 0 && (
-              <div className="ingredients-list">
-                {ingredients.map((ingredient) => (
-                  <div key={ingredient.id} className="ingredient-item">
-                    <div className="ingredient-info">
-                      <span className="ingredient-name">{ingredient.name}</span>
-                      <span className="ingredient-calories">
-                        {ingredient.weight}g | {ingredient.calories}
-                      </span>
-                    </div>
-                    <button className="delete-ingredient" onClick={() => handleDeleteIngredient(ingredient.id)}>
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
+
+          {ingredients.length > 0 && (
+            <div className="ingredients-list">
+              {ingredients.map((ingredient) => (
+                <div key={ingredient.id} className="ingredient-item">
+                  <div className="ingredient-info">
+                    <span className="ingredient-name">{ingredient.name}</span>
+                    <span className="ingredient-calories">
+                      {ingredient.weight}g | {ingredient.calories}
+                    </span>
+                  </div>
+                  <button className="delete-ingredient" onClick={() => handleDeleteIngredient(ingredient.id)}>
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
 
           <h3 className="section-subtitle">선택 입력</h3>
 

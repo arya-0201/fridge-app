@@ -1,8 +1,10 @@
 "use client"
 
-import { LucideRefrigerator, BookOpen, Database } from "lucide-react"
 import { useState, useEffect } from "react"
 import "../styles/navigation.css"
+import FridgeIcon from "../app/assets/icons/fridge.svg"
+import RecipeIcon from "../app/assets/icons/recipe.svg"
+import IngredientsIcon from "../app/assets/icons/ingredients.svg"
 
 interface NavigationProps {
   activeTab: "fridge" | "recipe" | "ingredients"
@@ -30,23 +32,21 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
     }
   }, [])
 
-  const iconSize = isMobile ? 24 : 28
-
   return (
     <div className="nav-container">
       <button onClick={() => setActiveTab("fridge")} className={`nav-button ${activeTab === "fridge" ? "active" : ""}`}>
-        <LucideRefrigerator size={iconSize} />
+        <FridgeIcon width={24} height={24} />
         <span className="nav-label">마이냉장고</span>
       </button>
       <button onClick={() => setActiveTab("recipe")} className={`nav-button ${activeTab === "recipe" ? "active" : ""}`}>
-        <BookOpen size={iconSize} />
+        <RecipeIcon width={24} height={24} />
         <span className="nav-label">레시피북</span>
       </button>
       <button
         onClick={() => setActiveTab("ingredients")}
         className={`nav-button ${activeTab === "ingredients" ? "active" : ""}`}
       >
-        <Database size={iconSize} />
+        <IngredientsIcon width={24} height={24} />
         <span className="nav-label">식재료DB</span>
       </button>
     </div>
