@@ -90,8 +90,8 @@
   font-size: 16px;
 }
 
-/* 미디어 쿼리 - 태블릿 (iPad Mini) */
-@media (min-width: 431px) {
+/* Tablet styles */
+@media (min-width: 440px) {
   .page-container {
     padding: 24px;
   }

@@ -1,10 +1,13 @@
 import type { Metadata } from 'next'
-import '../styles/globals.css'
+import { Inter } from 'next/font/google'
+import './globals.css'
+import AppShell from '@/components/app-shell'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'Fridge App',
+  description: 'Track your fridge contents and recipes',
 }
 
 export default function RootLayout({
@@ -14,7 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={inter.className}>
+        <AppShell>{children}</AppShell>
+      </body>
     </html>
   )
 }

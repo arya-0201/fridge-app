@@ -86,7 +86,7 @@ export default function MyRefrigerator() {
 
       <div className="item-list">
         {ingredients.length === 0 ? (
-          <div className="flex h-[calc(100vh-200px)] items-center justify-center">
+          <div className="flex h-[calc(var(--app-height)-200px)] items-center justify-center">
             <p className="text-gray-400 text-lg">냉장고 다 털었다!</p>
           </div>
         ) : (

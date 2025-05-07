@@ -31,7 +31,7 @@ export default function Home() {
   useEffect(() => {
     // 초기 화면 크기 확인
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 430)
+      setIsMobile(window.innerWidth < 440)
     }
 
     // 초기 실행
