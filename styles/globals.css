@@ -128,8 +128,11 @@ body {
 .main-content {
   flex: 1;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
   background-color: #f7f7f7;;
+}
+
+.page-container {
+  -webkit-overflow-scrolling: touch;
 }
 
 /* add 버튼 global css */
