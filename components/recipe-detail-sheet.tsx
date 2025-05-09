@@ -3,28 +3,12 @@
 import { useEffect, useRef, useState } from "react"
 import { X, Instagram, Youtube, ChevronRight } from "lucide-react"
 import "../styles/recipe-detail-sheet.css"
-import { firebaseApp } from '../lib/firebase'
-import { getFirestore, collection, getDocs } from 'firebase/firestore'
-
-interface Ingredient {
-  id: string
-  name: string
-  calories: string
-  weight?: string
-}
+import { Recipe, Ingredient } from "../src/services/recipeService"
 
 interface RecipeDetailSheetProps {
   isOpen: boolean
   onClose: () => void
-  recipe: {
-    id: string
-    name: string
-    ingredients: Ingredient[]
-    description?: string
-    instagramLinks?: string[]
-    youtubeLinks?: string[]
-    image?: string
-  } | null
+  recipe: Recipe | null
 }
 
 export default function RecipeDetailSheet({ isOpen, onClose, recipe }: RecipeDetailSheetProps) {
@@ -116,16 +100,20 @@ export default function RecipeDetailSheet({ isOpen, onClose, recipe }: RecipeDet
           </button>
         </div>
 
-        {recipe.image && <img src={recipe.image || "/placeholder.svg"} alt={recipe.name} className="recipe-image" />}
+        <img 
+          src={recipe.image || "/images/recipes/default-recipe.png"} 
+          alt={recipe.name} 
+          className="recipe-image" 
+        />
 
         <div className="sheet-content">
-          <h3 className="section-title">재료</h3>
+          <h3 className="section-title text-[16px] mb-2">재료</h3>
           <div className="ingredients-list">
             {recipe.ingredients.map((ingredient) => (
-              <div key={ingredient.id} className="ingredient-item">
-                <div className="ingredient-name">{ingredient.name}</div>
-                <div className="ingredient-info">
-                  {ingredient.weight || "180g"} | {ingredient.calories}
+              <div key={ingredient.id} className="ingredient-item relative ipad:px-0">
+                <div className="ingredient-name block pr-0 ipad:text-[20px]">{ingredient.name}</div>
+                <div className="ingredient-info absolute top-0 right-0">
+                  {ingredient.weight ? `${ingredient.weight}g` : "180g"} | {ingredient.calories}kcal
                 </div>
               </div>
             ))}
@@ -133,7 +121,7 @@ export default function RecipeDetailSheet({ isOpen, onClose, recipe }: RecipeDet
 
           {recipe.description && (
             <>
-              <h3 className="section-title">상세설명</h3>
+              <h3 className="section-title text-[16px] mb-2 description-title">상세설명</h3>
               <div className="description-box">{recipe.description}</div>
             </>
           )}
@@ -148,11 +136,11 @@ export default function RecipeDetailSheet({ isOpen, onClose, recipe }: RecipeDet
             </button>
           )}
 
-          {recipe.youtubeLinks && recipe.youtubeLinks.length > 0 && (
-            <button className="link-button youtube" onClick={() => openLink(recipe.youtubeLinks![0])}>
+          {recipe.youtubeLink && recipe.youtubeLink.trim() !== "" && (
+            <button className="link-button youtube" onClick={() => openLink(recipe.youtubeLink!.trim())}>
               <div className="link-icon">
                 <Youtube size={isMobile ? 18 : 20} />
-                <span>Youtube 링크 바로가기</span>
+                <span>유튜브 링크 바로가기</span>
               </div>
               <ChevronRight size={isMobile ? 18 : 20} className="chevron-icon" />
             </button>

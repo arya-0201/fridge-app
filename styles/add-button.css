@@ -34,9 +34,15 @@
   transform: translateY(1px);
 }
 
-@media (min-width: 431px) {
+@media (min-width: 640px) {
   .add-button {
     padding: 14px 28px;
     font-size: 17px;
+  }
+}
+
+@media (min-width: 768px) {
+  .add-button-container {
+    bottom: calc(72px + 20px + env(safe-area-inset-bottom));
   }
 }

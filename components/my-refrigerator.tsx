@@ -82,7 +82,9 @@ export default function MyRefrigerator() {
 
   return (
     <div className="page-container">
-      <h1 className="page-title">마이냉장고</h1>
+      <header className="h-8 flex items-center justify-between mb-4 sm:mb-6">
+        <h1 className="page-title">마이냉장고</h1>
+      </header>
 
       <div className="item-list">
         {ingredients.length === 0 ? (

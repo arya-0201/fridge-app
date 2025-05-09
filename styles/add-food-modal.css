@@ -48,7 +48,17 @@
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 8px;
+  background-color: #f3f4f6;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.form-group:focus-within {
+  border-color: #0279E2;
+  background-color: white;
 }
 
 .form-label {
@@ -75,27 +85,17 @@
   position: relative;
   display: flex;
   align-items: center;
-  background-color: #f3f4f6;
+  background-color: transparent;
   border-radius: 8px;
   padding: 0;
-  border: none;
 }
 
-.form-input-with-unit:focus-within {
-  border: 1px solid #0077ff;
-}
-
-.form-input-with-unit .form-input {
-  padding: 0;
-  margin-left: 0;
-}
-
-.unit {
+.form-input-with-unit .unit {
   position: absolute;
   right: 0;
   color: #666;
   font-size: 0.9rem;
-  padding-right: 16px;
+  padding-right: 0;
 }
 
 .form-input-with-button {

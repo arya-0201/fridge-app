@@ -129,6 +129,7 @@ body {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  background-color: #f7f7f7;;
 }
 
 /* add 버튼 global css */
@@ -174,7 +175,7 @@ body {
 }
 
 /* 미디어 쿼리 - 태블릿 (iPad Mini) */
-@media (min-width: 431px) {
+@media (min-width: 640px) {
   .app-container {
     max-width: var(--ipad-mini-width);
     margin: 0 auto;
@@ -183,5 +184,26 @@ body {
   .add-button {
     padding: 14px 28px;
     font-size: 17px;
+  }
+}
+
+/* Page title styles */
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  margin: 0;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Tablet styles */
+@media (min-width: 640px) {
+  .page-title {
+    font-size: 28px;
   }
 }

@@ -107,17 +107,14 @@ export default function AddFoodModal({
         <div className="modal-content">
           <div className="form-group">
             <label className="form-label">재료 이름</label>
-            <div className="form-input-with-button">
+            <div className="form-input-with-unit">
               <input
                 type="text"
                 className="form-input"
                 placeholder="이름을 입력해주세요"
                 value={name}
-                readOnly
+                onChange={(e) => setName(e.target.value)}
               />
-              <button className="search-button" onClick={() => setIsSearchSheetOpen(true)}>
-                검색
-              </button>
             </div>
           </div>
 

@@ -6,26 +6,7 @@ import { useState, useRef, useEffect } from "react"
 import { X, Search, Trash2 } from "lucide-react"
 import "../styles/add-recipe-modal.css"
 import IngredientSearchSheet from "./ingredient-search-sheet"
-import { firebaseApp } from '../lib/firebase'
-import { getFirestore, collection, getDocs } from 'firebase/firestore'
-
-interface Ingredient {
-  id: string
-  name: string
-  calories: string
-  weight?: string
-}
-
-interface Recipe {
-  id: string
-  name: string
-  ingredients: Ingredient[]
-  description?: string
-  instagramLinks?: string[]
-  youtubeLinks?: string[]
-  image?: string
-  status: "saved" | "eat" | "provided"
-}
+import { Recipe, Ingredient } from "../src/services/recipeService"
 
 interface AddRecipeModalProps {
   isOpen: boolean
@@ -35,6 +16,7 @@ interface AddRecipeModalProps {
     ingredients: Ingredient[]
     description: string
     instagramLinks: string[]
+    youtubeLink: string
     image?: string
   }) => void
   isEditMode?: boolean
@@ -52,7 +34,7 @@ export default function AddRecipeModal({
   const [ingredients, setIngredients] = useState<Ingredient[]>([])
   const [description, setDescription] = useState("")
   const [instagramLink1, setInstagramLink1] = useState("")
-  const [instagramLink2, setInstagramLink2] = useState("")
+  const [youtubeLink, setYoutubeLink] = useState("")
   const [image, setImage] = useState<string | null>(null)
   const [isIngredientSearchOpen, setIsIngredientSearchOpen] = useState(false)
 
@@ -68,11 +50,12 @@ export default function AddRecipeModal({
       // Instagram 링크 설정
       if (editingRecipe.instagramLinks && editingRecipe.instagramLinks.length > 0) {
         setInstagramLink1(editingRecipe.instagramLinks[0] || "")
-        setInstagramLink2(editingRecipe.instagramLinks[1] || "")
       } else {
         setInstagramLink1("")
-        setInstagramLink2("")
       }
+
+      // YouTube 링크 설정
+      setYoutubeLink(editingRecipe.youtubeLink || "")
 
       // 이미지 설정
       setImage(editingRecipe.image || null)
@@ -82,7 +65,7 @@ export default function AddRecipeModal({
       setIngredients([])
       setDescription("")
       setInstagramLink1("")
-      setInstagramLink2("")
+      setYoutubeLink("")
       setImage(null)
     }
   }, [isEditMode, editingRecipe, isOpen])
@@ -137,15 +120,22 @@ export default function AddRecipeModal({
 
   // 폼 제출 처리
   const handleSubmit = () => {
-    const instagramLinks = [instagramLink1, instagramLink2].filter((link) => link.trim() !== "")
+    // Filter out empty links and ensure we always have an array
+    const instagramLinks = [instagramLink1]
+      .filter((link) => link.trim() !== "")
+      .map((link) => link.trim())
 
-    onAddRecipe({
+    // Create the recipe object with default values for optional fields
+    const recipeData = {
       name,
       ingredients,
-      description,
-      instagramLinks,
-      image: image || undefined,
-    })
+      description: description.trim() || "",
+      instagramLinks: instagramLinks.length > 0 ? instagramLinks : [],
+      youtubeLink: youtubeLink.trim() || "",
+      image: image || "",
+    }
+
+    onAddRecipe(recipeData)
   }
 
   // 모달이 닫혀있으면 렌더링하지 않음
@@ -248,13 +238,13 @@ export default function AddRecipeModal({
           </div>
 
           <div className="form-group">
-            <label className="form-label">instagram 링크</label>
+            <label className="form-label">YouTube 링크</label>
             <input
               type="text"
               className="form-input"
               placeholder="링크를 붙여넣어주세요"
-              value={instagramLink2}
-              onChange={(e) => setInstagramLink2(e.target.value)}
+              value={youtubeLink}
+              onChange={(e) => setYoutubeLink(e.target.value)}
             />
           </div>
         </div>

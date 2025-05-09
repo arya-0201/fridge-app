@@ -139,7 +139,9 @@ export default function IngredientDB() {
 
   return (
     <div className="page-container">
-      <h1 className="page-title">식재료DB</h1>
+      <header className="h-8 flex items-center justify-between mb-4 sm:mb-6">
+        <h1 className="page-title">식재료DB</h1>
+      </header>
 
       <div className="ingredient-list">
         {foods.map((food) => (
