@@ -55,6 +55,30 @@ export default function AddFridgeModal({ isOpen, onClose, onAddIngredient }: Add
     setName(ingredient.name)
     setWeight(ingredient.weight.toString())
     setSearchTerm("") // Clear search term to hide dropdown
+
+    // 평균 유통기한 자동 반영
+    if (registrationDate && ingredient.shelfLife) {
+      const regDate = new Date(registrationDate.replace(/\./g, "-"))
+      regDate.setDate(regDate.getDate() + Number(ingredient.shelfLife))
+      const year = regDate.getFullYear()
+      const month = String(regDate.getMonth() + 1).padStart(2, "0")
+      const day = String(regDate.getDate()).padStart(2, "0")
+      setExpiryDate(`${year}.${month}.${day}`)
+    }
+  }
+
+  // 등록일 변경 시에도 자동 반영
+  const handleRegistrationDateChange = (value: string) => {
+    setRegistrationDate(value)
+    const selected = ingredients.find(i => i.name === name)
+    if (selected && selected.shelfLife) {
+      const regDate = new Date(value.replace(/\./g, "-"))
+      regDate.setDate(regDate.getDate() + Number(selected.shelfLife))
+      const year = regDate.getFullYear()
+      const month = String(regDate.getMonth() + 1).padStart(2, "0")
+      const day = String(regDate.getDate()).padStart(2, "0")
+      setExpiryDate(`${year}.${month}.${day}`)
+    }
   }
 
   // 모달이 열릴 때 현재 날짜를 기본값으로 설정
@@ -104,14 +128,31 @@ export default function AddFridgeModal({ isOpen, onClose, onAddIngredient }: Add
         <div className="modal-body-group">
           <FormGroup className="form-group">
             <label className="form-label">재료 이름</label>
-            <div className="input-box--icon">
+            <div className="input-box--icon" style={{ position: "relative" }}>
               <input
                 type="text"
                 className="input-box"
                 placeholder="이름을 입력해주세요"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => {
+                  setName(e.target.value)
+                  setSearchTerm(e.target.value)
+                }}
+                autoComplete="off"
               />
+              {searchTerm && filteredIngredients.length > 0 && (
+                <ul className="ingredient-dropdown">
+                  {filteredIngredients.map((ingredient) => (
+                    <li
+                      key={ingredient.id}
+                      className="ingredient-dropdown-item"
+                      onClick={() => handleIngredientSelect(ingredient)}
+                    >
+                      {ingredient.name}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </FormGroup>
 
@@ -138,7 +179,7 @@ export default function AddFridgeModal({ isOpen, onClose, onAddIngredient }: Add
                 className="input-box"
                 placeholder="날짜를 선택해주세요"
                 value={registrationDate}
-                onChange={(e) => setRegistrationDate(e.target.value)}
+                onChange={(e) => handleRegistrationDateChange(e.target.value)}
               />
             </div>
           </FormGroup>
