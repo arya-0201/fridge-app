@@ -69,9 +69,8 @@ export default function RecipeBook() {
 
   return (
     <div className="recipe-book-container">
-      <div className="header">
-        <h1 className="title">레시피북</h1>
-        <button className="add-button" onClick={() => router.push("/add-recipe-test2")}> <Plus size={20} /> 레시피 추가하기 </button>
+      <div className="header mb-4 sm:mb-6">
+        <h1 className="page-title">레시피북</h1>
       </div>
       <div className="recipe-list">
         {recipes.map((recipe) => (
@@ -90,6 +89,9 @@ export default function RecipeBook() {
         onClose={() => setIsDetailSheetOpen(false)}
         recipe={selectedRecipe}
       />
+      <div className="add-button-container">
+        <button className="add-button" onClick={() => router.push("/add-recipe-test2")}> <Plus size={20} /> 레시피 추가하기 </button>
+      </div>
     </div>
   )
 }
