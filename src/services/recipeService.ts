@@ -33,7 +33,7 @@ export interface Recipe {
   youtubeLink?: string
   image?: string
   status: "saved" | "eat" | "provided"
-  createdAt?: Timestamp
+  createdAt?: any
 }
 
 // Helper function to sanitize recipe data for Firestore

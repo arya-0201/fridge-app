@@ -6,7 +6,7 @@ import { X, Search, Trash2 } from "lucide-react"
 import "../../styles/add-recipe-test2.css"
 import "../../styles/add-recipe-modal.css"
 import IngredientSearchSheet from "../../components/ingredient-search-sheet"
-import { Recipe, Ingredient, addRecipe, updateRecipe, getRecipe } from "../../src/services/recipeService"
+import { Recipe, Ingredient } from "../../src/services/recipeService"
 
 export default function AddRecipeTest2Client() {
   const router = useRouter()
@@ -28,7 +28,9 @@ export default function AddRecipeTest2Client() {
     const loadRecipe = async () => {
       if (isEditMode && recipeId) {
         try {
-          const recipe = await getRecipe(recipeId)
+          const res = await fetch(`/api/recipes/${recipeId}`)
+          if (!res.ok) throw new Error('Failed to fetch recipe')
+          const recipe: Recipe = await res.json()
           if (recipe) {
             setName(recipe.name)
             setIngredients(recipe.ingredients)
@@ -113,9 +115,17 @@ export default function AddRecipeTest2Client() {
       }
 
       if (isEditMode && recipeId) {
-        await updateRecipe(recipeId, recipeData)
+        await fetch(`/api/recipes/${recipeId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(recipeData),
+        })
       } else {
-        await addRecipe(recipeData)
+        await fetch("/api/recipes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(recipeData),
+        })
       }
       router.back()
     } catch (error) {
