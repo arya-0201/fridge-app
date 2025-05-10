@@ -90,7 +90,7 @@ export default function RecipeBook() {
           onClick={() => router.push('/add-recipe-test2')}
         >
           <Plus size={20} />
-          레시피추가하기 테스트2
+          레시피 추가하기
         </button>
       </div>
 
