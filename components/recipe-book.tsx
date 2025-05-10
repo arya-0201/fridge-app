@@ -1,6 +1,5 @@
 "use client"
 
-import type React from "react"
 import { useEffect, useState } from "react"
 import { Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -9,7 +8,7 @@ import "../styles/add-button.css"
 import "../styles/dropdown-menu.css"
 import RecipeDetailSheet from "./recipe-detail-sheet"
 import RecipeCard from "./recipe-card"
-import { Recipe, subscribeToRecipes, deleteRecipe } from "../src/services/recipeService"
+import { Recipe } from "../src/services/recipeService"
 
 export default function RecipeBook() {
   const router = useRouter()
@@ -23,14 +22,16 @@ export default function RecipeBook() {
     window.scrollTo(0, 0)
   }, [])
 
-  // Firestore 구독 설정
+  // Fetch recipes from API
   useEffect(() => {
-    const unsubscribe = subscribeToRecipes((updatedRecipes) => {
-      setRecipes(updatedRecipes)
-    })
-
-    // 컴포넌트 언마운트 시 구독 해제
-    return () => unsubscribe()
+    const fetchRecipes = async () => {
+      const res = await fetch("/api/recipes")
+      if (res.ok) {
+        const data = await res.json()
+        setRecipes(data)
+      }
+    }
+    fetchRecipes()
   }, [])
 
   // 드롭다운 메뉴 토글
@@ -52,7 +53,8 @@ export default function RecipeBook() {
   const handleDeleteRecipe = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation() // 이벤트 버블링 방지
     try {
-      await deleteRecipe(id)
+      await fetch(`/api/recipes/${id}`, { method: "DELETE" })
+      setRecipes(recipes.filter(recipe => recipe.id !== id))
       closeDropdown()
     } catch (error) {
       console.error('Error deleting recipe:', error)
@@ -66,11 +68,11 @@ export default function RecipeBook() {
   }
 
   return (
-    <div className="page-container">
-      <header className="h-8 flex items-center justify-between mb-4 sm:mb-6">
-        <h1 className="page-title">레시피북</h1>
-      </header>
-
+    <div className="recipe-book-container">
+      <div className="header">
+        <h1 className="title">레시피북</h1>
+        <button className="add-button" onClick={() => router.push("/add-recipe-test2")}> <Plus size={20} /> 레시피 추가하기 </button>
+      </div>
       <div className="recipe-list">
         {recipes.map((recipe) => (
           <RecipeCard
@@ -83,17 +85,6 @@ export default function RecipeBook() {
           />
         ))}
       </div>
-
-      <div className="add-button-container">
-        <button 
-          className="add-button" 
-          onClick={() => router.push('/add-recipe-test2')}
-        >
-          <Plus size={20} />
-          레시피 추가하기
-        </button>
-      </div>
-
       <RecipeDetailSheet
         isOpen={isDetailSheetOpen}
         onClose={() => setIsDetailSheetOpen(false)}
