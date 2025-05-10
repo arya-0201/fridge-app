@@ -1,0 +1,10 @@
+.page-container {
+  padding: 0 !important;
+}
+
+.image-upload-area {
+  margin-top: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  border-radius: 0 !important;
+} 

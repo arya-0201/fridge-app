@@ -9,17 +9,14 @@ import "../styles/add-button.css"
 import "../styles/dropdown-menu.css"
 import RecipeDetailSheet from "./recipe-detail-sheet"
 import RecipeCard from "./recipe-card"
-import AddRecipeModal from "./add-recipe-modal"
-import { Recipe, subscribeToRecipes, deleteRecipe, updateRecipe, addRecipe, Ingredient } from "../src/services/recipeService"
+import { Recipe, subscribeToRecipes, deleteRecipe } from "../src/services/recipeService"
 
 export default function RecipeBook() {
   const router = useRouter()
   const [isDetailSheetOpen, setIsDetailSheetOpen] = useState(false)
-  const [isAddRecipeModalOpen, setIsAddRecipeModalOpen] = useState(false)
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
   const [recipes, setRecipes] = useState<Recipe[]>([])
-  const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
 
   // Reset scroll position on mount
   useEffect(() => {
@@ -51,14 +48,6 @@ export default function RecipeBook() {
     setOpenDropdownId(null)
   }
 
-  // 레시피 수정 시작
-  const handleEditRecipe = (recipe: Recipe, e: React.MouseEvent) => {
-    e.stopPropagation() // 이벤트 버블링 방지
-    setEditingRecipe(recipe)
-    setIsAddRecipeModalOpen(true)
-    closeDropdown()
-  }
-
   // 레시피 삭제
   const handleDeleteRecipe = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation() // 이벤트 버블링 방지
@@ -70,40 +59,10 @@ export default function RecipeBook() {
     }
   }
 
-  // 레시피 추가 모달 열기
-  const openAddRecipeModal = () => {
-    setEditingRecipe(null)
-    setIsAddRecipeModalOpen(true)
-  }
-
   // 레시피 상세 보기 함수
   const handleViewRecipeDetail = (recipe: Recipe) => {
     setSelectedRecipe(recipe)
     setIsDetailSheetOpen(true)
-  }
-
-  // 레시피 추가/수정 처리
-  const handleAddRecipe = async (recipeData: {
-    name: string
-    ingredients: Ingredient[]
-    description: string
-    instagramLinks: string[]
-    youtubeLink: string
-    image?: string
-  }) => {
-    try {
-      if (editingRecipe?.id) {
-        await updateRecipe(editingRecipe.id, recipeData)
-      } else {
-        await addRecipe({
-          ...recipeData,
-          status: "saved",
-        })
-      }
-      setIsAddRecipeModalOpen(false)
-    } catch (error) {
-      console.error("Error saving recipe:", error)
-    }
   }
 
   return (
@@ -117,7 +76,6 @@ export default function RecipeBook() {
           <RecipeCard
             key={recipe.id}
             recipe={recipe}
-            onEdit={handleEditRecipe}
             onDelete={handleDeleteRecipe}
             onViewDetail={handleViewRecipeDetail}
             isDropdownOpen={openDropdownId === recipe.id}
@@ -127,9 +85,12 @@ export default function RecipeBook() {
       </div>
 
       <div className="add-button-container">
-        <button className="add-button" onClick={openAddRecipeModal}>
+        <button 
+          className="add-button" 
+          onClick={() => router.push('/add-recipe-test2')}
+        >
           <Plus size={20} />
-          레시피 추가하기
+          레시피추가하기 테스트2
         </button>
       </div>
 
@@ -137,14 +98,6 @@ export default function RecipeBook() {
         isOpen={isDetailSheetOpen}
         onClose={() => setIsDetailSheetOpen(false)}
         recipe={selectedRecipe}
-      />
-
-      <AddRecipeModal
-        isOpen={isAddRecipeModalOpen}
-        onClose={() => setIsAddRecipeModalOpen(false)}
-        onAddRecipe={handleAddRecipe}
-        isEditMode={!!editingRecipe}
-        editingRecipe={editingRecipe}
       />
     </div>
   )

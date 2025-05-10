@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react"
 import { MoreVertical, Edit, Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { Recipe, Ingredient } from "../src/services/recipeService"
 import { FridgeItem, getFridgeItems } from "../src/services/fridgeService"
 
 interface RecipeCardProps {
   recipe: Recipe
-  onEdit: (recipe: Recipe, e: React.MouseEvent) => void
   onDelete: (id: string, e: React.MouseEvent) => void
   onViewDetail: (recipe: Recipe) => void
   isDropdownOpen: boolean
@@ -16,12 +16,12 @@ interface RecipeCardProps {
 
 export default function RecipeCard({
   recipe,
-  onEdit,
   onDelete,
   onViewDetail,
   isDropdownOpen,
   onToggleDropdown,
 }: RecipeCardProps) {
+  const router = useRouter()
   const [fridgeItems, setFridgeItems] = useState<FridgeItem[]>([])
 
   // Load fridge items on mount
@@ -103,7 +103,13 @@ export default function RecipeCard({
               <>
                 <div className="dropdown-overlay" onClick={(e) => onToggleDropdown(recipe.id!, e)}></div>
                 <div className="dropdown-menu">
-                  <div className="dropdown-item edit" onClick={(e) => onEdit(recipe, e)}>
+                  <div 
+                    className="dropdown-item edit" 
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      router.push(`/add-recipe-test2?edit=true&id=${recipe.id}`)
+                    }}
+                  >
                     <Edit size={16} />
                     수정
                   </div>

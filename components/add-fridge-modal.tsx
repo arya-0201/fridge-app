@@ -6,6 +6,8 @@ import "../styles/add-fridge-modal.css"
 import { firebaseApp } from '../lib/firebase'
 import { getFirestore, collection, getDocs } from 'firebase/firestore'
 import { Ingredient, getIngredients } from "../src/services/ingredientService"
+import { FormGroup } from "./ui/form-group"
+import IngredientSearchSheet from "./ingredient-search-sheet"
 
 interface AddFridgeModalProps {
   isOpen: boolean
@@ -94,88 +96,66 @@ export default function AddFridgeModal({ isOpen, onClose, onAddIngredient }: Add
       <div className="modal-container">
         <div className="modal-header">
           <div></div>
-          <h2 className="modal-title">냉장고에 재료넣기</h2>
+          <h2 className="modal-title">냉장고에 재료 넣기</h2>
           <button className="close-button" onClick={onClose}>
             <X size={24} />
           </button>
         </div>
-        <div className="modal-content">
-          <div className="form-group border-none focus-within:border focus-within:border-[#0077ff]">
-            <label className="form-label">재료 검색</label>
+        <div className="modal-body-group">
+          <FormGroup className="form-group">
+            <label className="form-label">재료 이름</label>
             <div className="input-box--icon">
-              <Search className="icon" size={24} color="#6b7280" />
               <input
                 type="text"
-                className="input-box border-none focus:outline-none focus:border focus:border-[#0077ff]"
-                placeholder="재료명을 입력해주세요"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                className="input-box"
+                placeholder="이름을 입력해주세요"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
-            {searchTerm && (
-              <div className="mt-1 bg-white border rounded-md shadow-lg">
-                {isLoading ? (
-                  <div className="p-2 text-gray-500">로딩중...</div>
-                ) : filteredIngredients.length > 0 ? (
-                  <ul className="max-h-60 overflow-auto">
-                    {filteredIngredients.map((ingredient) => (
-                      <li
-                        key={ingredient.id}
-                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                        onClick={() => handleIngredientSelect(ingredient)}
-                      >
-                        {ingredient.name}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className="p-2 text-gray-500">검색 결과가 없습니다</div>
-                )}
-              </div>
-            )}
-          </div>
+          </FormGroup>
 
-          <div className="form-group border-none focus-within:border focus-within:border-[#0077ff]">
+          <FormGroup className="form-group">
             <label className="form-label">무게</label>
             <div className="input-box--unit">
               <input
                 type="number"
-                className="input-box border-none focus:outline-none focus:border focus:border-[#0077ff]"
+                className="input-box"
                 placeholder="0"
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
               />
               <span className="unit">g</span>
             </div>
-          </div>
+          </FormGroup>
 
-          <div className="form-group border-none focus-within:border focus-within:border-[#0077ff]">
+          <FormGroup className="form-group">
             <label className="form-label">등록일</label>
             <div className="input-box--icon">
               <Calendar className="icon" size={24} color="#6b7280" />
               <input
                 type="text"
-                className="input-box border-none focus:outline-none focus:border focus:border-[#0077ff]"
+                className="input-box"
                 placeholder="날짜를 선택해주세요"
                 value={registrationDate}
                 onChange={(e) => setRegistrationDate(e.target.value)}
               />
             </div>
-          </div>
+          </FormGroup>
 
-          <div className="form-group border-none focus-within:border focus-within:border-[#0077ff]">
+          <FormGroup className="form-group">
             <label className="form-label">유통기한</label>
             <div className="input-box--icon">
               <Calendar className="icon" size={24} color="#6b7280" />
               <input
                 type="text"
-                className="input-box border-none focus:outline-none focus:border focus:border-[#0077ff]"
+                className="input-box"
                 placeholder="날짜를 선택해주세요"
                 value={expiryDate}
                 onChange={(e) => setExpiryDate(e.target.value)}
               />
             </div>
-          </div>
+          </FormGroup>
         </div>
         <div style={{ padding: "20px" }}>
           <button

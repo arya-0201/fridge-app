@@ -151,109 +151,102 @@ export default function AddRecipeModal({
             <X size={24} />
           </button>
         </div>
-        <div className="modal-content">
-          <div className="image-upload-area">
-            {image ? (
-              <div className="image-preview-container">
-                <img src={image || "/placeholder.svg"} alt="Recipe preview" className="recipe-image-preview" />
-                <button className="remove-image-button" onClick={handleRemoveImage}>
-                  <Trash2 size={20} />
-                </button>
-              </div>
-            ) : (
-              <button className="image-upload-button" onClick={handleImageButtonClick}>
-                이미지 추가
+        <div className="image-upload-area">
+          {image ? (
+            <div className="image-preview-container">
+              <img src={image || "/placeholder.svg"} alt="Recipe preview" className="recipe-image-preview" />
+              <button className="remove-image-button" onClick={handleRemoveImage}>
+                <Trash2 size={20} />
               </button>
-            )}
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              style={{ display: "none" }}
-              onChange={handleImageUpload}
-            />
-          </div>
-
-          <h3 className="section-title">필수 입력</h3>
-
-          <div className="form-group">
-            <label className="form-label">레시피 이름</label>
-            <input
-              type="text"
-              className="form-input"
-              placeholder="이름을 입력해주세요"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">재료 검색</label>
-            <div className="form-input-with-icon" onClick={openIngredientSearch}>
-              <Search className="icon" size={24} color="#6b7280" />
-              <input type="text" className="form-input" placeholder="재료명을 입력해주세요" readOnly value="" />
             </div>
-          </div>
-
-          {ingredients.length > 0 && (
-            <div className="ingredients-list">
-              {ingredients.map((ingredient) => (
-                <div key={ingredient.id} className="ingredient-item">
-                  <div className="ingredient-info">
-                    <span className="ingredient-name">{ingredient.name}</span>
-                    <span className="ingredient-calories">
-                      {ingredient.weight}g | {ingredient.calories}
-                    </span>
-                  </div>
-                  <button className="delete-ingredient" onClick={() => handleDeleteIngredient(ingredient.id)}>
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              ))}
-            </div>
+          ) : (
+            <button className="image-upload-button" onClick={handleImageButtonClick}>
+              이미지 추가
+            </button>
           )}
-
-          <h3 className="section-subtitle">선택 입력</h3>
-
-          <div className="form-group">
-            <label className="form-label">상세설명</label>
-            <textarea
-              className="form-input"
-              placeholder="설명을 입력해주세요"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              style={{ height: "100px", resize: "none" }}
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">instagram 링크</label>
-            <input
-              type="text"
-              className="form-input"
-              placeholder="링크를 붙여넣어주세요"
-              value={instagramLink1}
-              onChange={(e) => setInstagramLink1(e.target.value)}
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">YouTube 링크</label>
-            <input
-              type="text"
-              className="form-input"
-              placeholder="링크를 붙여넣어주세요"
-              value={youtubeLink}
-              onChange={(e) => setYoutubeLink(e.target.value)}
-            />
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleImageUpload}
+          />
+        </div>
+        <div className="modal-content">
+          <div className="modal-body-group">
+            <h3 className="section-title">필수 입력</h3>
+            <div className="form-group">
+              <label className="form-label">레시피 이름</label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="이름을 입력해주세요"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">재료 검색</label>
+              <div className="form-input-with-icon" onClick={openIngredientSearch}>
+                <Search className="icon" size={24} color="#6b7280" />
+                <input type="text" className="form-input" placeholder="재료명을 입력해주세요" readOnly value="" />
+              </div>
+            </div>
+            {ingredients.length > 0 && (
+              <div className="ingredients-list">
+                {ingredients.map((ingredient) => (
+                  <div key={ingredient.id} className="ingredient-item">
+                    <span>{ingredient.name}</span>
+                    <span>{ingredient.weight}g</span>
+                    <button onClick={() => handleDeleteIngredient(ingredient.id)}>
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="form-group">
+              <label className="form-label">설명</label>
+              <textarea
+                className="form-input"
+                placeholder="설명을 입력해주세요"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={4}
+              />
+            </div>
+            <h3 className="section-title mt-8">선택 입력</h3>
+            <div className="form-group">
+              <label className="form-label">인스타그램 링크</label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="링크를 입력해주세요"
+                value={instagramLink1}
+                onChange={(e) => setInstagramLink1(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">유튜브 링크</label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="링크를 입력해주세요"
+                value={youtubeLink}
+                onChange={(e) => setYoutubeLink(e.target.value)}
+              />
+            </div>
+            <div className="submit-button-container">
+              <button
+                className="submit-button"
+                onClick={handleSubmit}
+                disabled={!name || ingredients.length === 0}
+              >
+                저장
+              </button>
+            </div>
           </div>
         </div>
-        <div style={{ padding: "20px" }}>
-          <button className="submit-button" onClick={handleSubmit} disabled={!name || ingredients.length === 0}>
-            {isEditMode ? "수정하기" : "추가하기"}
-          </button>
-        </div>
-
         <IngredientSearchSheet
           isOpen={isIngredientSearchOpen}
           onClose={() => setIsIngredientSearchOpen(false)}

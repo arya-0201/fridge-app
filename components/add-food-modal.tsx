@@ -104,7 +104,7 @@ export default function AddFoodModal({
             <X size={24} />
           </button>
         </div>
-        <div className="modal-content">
+        <div className="modal-body-group">
           <div className="form-group">
             <label className="form-label">재료 이름</label>
             <div className="form-input-with-unit">

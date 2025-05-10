@@ -10,7 +10,8 @@ import {
   query,
   orderBy,
   Timestamp,
-  onSnapshot
+  onSnapshot,
+  getDoc
 } from 'firebase/firestore'
 
 const db = getFirestore(firebaseApp)
@@ -109,6 +110,25 @@ export const deleteRecipe = async (id: string): Promise<void> => {
     await deleteDoc(docRef)
   } catch (error) {
     console.error('Error deleting recipe:', error)
+    throw error
+  }
+}
+
+// Get a single recipe by ID
+export const getRecipe = async (id: string): Promise<Recipe | null> => {
+  try {
+    const docRef = doc(db, RECIPE_COLLECTION, id)
+    const docSnap = await getDoc(docRef)
+    
+    if (docSnap.exists()) {
+      return {
+        id: docSnap.id,
+        ...docSnap.data()
+      } as Recipe
+    }
+    return null
+  } catch (error) {
+    console.error('Error getting recipe:', error)
     throw error
   }
 } 
