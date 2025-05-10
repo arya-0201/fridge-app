@@ -7,6 +7,8 @@ import "../styles/add-button.css"
 import "../styles/dropdown-menu.css"
 import AddFoodModal from "./add-food-modal"
 import { Ingredient, getIngredients, addIngredient, updateIngredient, deleteIngredient } from "../src/services/ingredientService"
+import IngredientAddSheet from "./ingredient-add-sheet"
+import * as XLSX from "xlsx"
 
 export default function IngredientDB() {
   // 모달 상태 관리
@@ -19,6 +21,12 @@ export default function IngredientDB() {
 
   // 식재료 목록 상태 관리
   const [foods, setFoods] = useState<Ingredient[]>([])
+
+  // 추가 시트 상태 관리
+  const [isAddSheetOpen, setIsAddSheetOpen] = useState(false)
+
+  // 엑셀 업로드 input 상태
+  const [excelInputRef, setExcelInputRef] = useState<HTMLInputElement | null>(null)
 
   // 초기 데이터 로드
   useEffect(() => {
@@ -130,12 +138,38 @@ export default function IngredientDB() {
     setEditingFood(null)
   }
 
-  // 새 식재료 추가 모달 열기
-  const openAddFoodModal = () => {
-    setIsEditMode(false)
-    setEditingFood(null)
-    setIsModalOpen(true)
-  }
+  // 엑셀 업로드 함수
+  const handleExcelUpload = async (file: File) => {
+    if (!file) return;
+    const data = await file.arrayBuffer();
+    const workbook = XLSX.read(data);
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json<Ingredient>(sheet);
+    // 기존 DB 이름 목록
+    const existing = await getIngredients();
+    const existingNames = new Set(existing.map(i => i.name));
+    // 중복 체크 및 추가
+    const toAdd: Ingredient[] = [];
+    const duplicates: string[] = [];
+    for (const row of rows) {
+      if (row.name && !existingNames.has(row.name)) {
+        toAdd.push(row as Ingredient);
+      } else if (row.name) {
+        duplicates.push(row.name);
+      }
+    }
+    const newFoods: Ingredient[] = [];
+    for (const row of toAdd) {
+      const added = await addIngredient(row);
+      newFoods.push(added);
+    }
+    setFoods((prev) => [...newFoods, ...prev]);
+    if (duplicates.length > 0) {
+      alert(`이미 존재하는 재료는 추가하지 않았습니다: ${duplicates.join(", ")}`);
+    } else {
+      alert("엑셀 업로드가 완료되었습니다.");
+    }
+  };
 
   return (
     <div className="page-container">
@@ -144,8 +178,8 @@ export default function IngredientDB() {
       </header>
 
       <div className="ingredient-list">
-        {foods.map((food) => (
-          <div className="ingredient-card" key={food.id}>
+        {foods.map((food, idx) => (
+          <div className="ingredient-card" key={food.id || (food.name + idx)}>
             <div className="ingredient-content">
               <div className="ingredient-header">
                 <h2 className="ingredient-title">{food.name}</h2>
@@ -184,11 +218,39 @@ export default function IngredientDB() {
       </div>
 
       <div className="add-button-container">
-        <button className="add-button" onClick={openAddFoodModal}>
+        <button className="add-button" onClick={() => setIsAddSheetOpen(true)}>
           <Plus size={20} />
           식재료 등록하기
         </button>
       </div>
+
+      <IngredientAddSheet
+        isOpen={isAddSheetOpen}
+        onClose={() => setIsAddSheetOpen(false)}
+        onAddSingle={() => {
+          setIsAddSheetOpen(false)
+          setIsModalOpen(true)
+        }}
+        onExcelUpload={() => {
+          setIsAddSheetOpen(false)
+          excelInputRef?.click();
+        }}
+        onDownloadSample={() => {
+          window.open('/sample.xlsx')
+        }}
+      />
+
+      <input
+        type="file"
+        accept=".xlsx"
+        style={{ display: "none" }}
+        ref={ref => setExcelInputRef(ref)}
+        onChange={async (e) => {
+          const file = e.target.files?.[0];
+          if (file) await handleExcelUpload(file);
+          if (excelInputRef) excelInputRef.value = "";
+        }}
+      />
 
       <AddFoodModal
         isOpen={isModalOpen}

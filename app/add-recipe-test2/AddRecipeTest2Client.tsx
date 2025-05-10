@@ -139,7 +139,7 @@ export default function AddRecipeTest2Client() {
         <div className="flex items-center justify-between px-4 py-3">
           <div className="w-6"></div> {/* Spacer for centering */}
           <h1 className="text-lg font-semibold">
-            {isEditMode ? "레시피 수정하기" : "레시피추가하기 테스트2"}
+            {isEditMode ? "레시피 수정하기" : "레시피 추가하기"}
           </h1>
           <button 
             onClick={() => router.back()}
